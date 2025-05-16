@@ -1,0 +1,10 @@
+requests
+beautifulsoup4
+numpy
+pandas
+openpyxl
+paramiko
+dotenv
+colorama
+playwright
+flask
