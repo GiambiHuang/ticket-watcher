@@ -3,7 +3,7 @@ name: Deploy Python App to Oracle VM
 on:
   push:
     branches:
-      - main
+      - wubai
 
 jobs:
   deploy:
@@ -29,15 +29,15 @@ jobs:
           username: ${{ secrets.USERNAME }}
           key: ${{ secrets.PRIVATE_KEY }}
           script: |
-            cd ~/ticket-watcher
+            cd ~/ticket-watcher-wubai
             python3 -m venv venv
             source venv/bin/activate
             pip install -r requirements.txt
-            pm2 delete ticket-watcher || true
+            pm2 delete ticket-watcher-wubai || true
 
             echo "CHAT_ID=${{ secrets.CHAT_ID }}" > .env
             echo "BOT_TOKEN=${{ secrets.BOT_TOKEN }}" >> .env
 
-            pm2 start venv/bin/python --name ticket-watcher -- -u bot.py
+            pm2 start venv/bin/python --name ticket-watcher-wubai -- -u bot.py
             pm2 save
             exit 0
