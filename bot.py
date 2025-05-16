@@ -46,6 +46,7 @@ class TixcraftCleaner:
             
             title = soup.title.string if soup.title and title == '' else title
             areaNames = soup.find('div', class_='area-list').find_all('a')
+            gameDate = soup.find('select', id='gameId').text.strip()[:10]
 
             if len(areaNames) > 0:
                 script_strs = soup.find_all('script')
@@ -58,7 +59,7 @@ class TixcraftCleaner:
                 for areaNameEl in areaNames:
                     areaName = areaNameEl.text.strip()
                     if any(keyword in areaName for keyword in self.keywords):
-                        lines.append(f"[{areaName}]({areaUrlList[areaNameEl['id']]})\n\n")
+                        lines.append(f"{gameDate}__{areaName}_\n{areaUrlList[areaNameEl['id']]}\n\n")
 
         if lines:
             url = f"https://api.telegram.org/bot{os.getenv('BOT_TOKEN')}/sendMessage"
