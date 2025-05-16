@@ -58,13 +58,13 @@ class TixcraftCleaner:
                 for areaNameEl in areaNames:
                     areaName = areaNameEl.text.strip()
                     if any(keyword in areaName for keyword in self.keywords):
-                        lines.append(f"{areaName}_\n{areaUrlList[areaNameEl['id']]}\n\n")
+                        lines.append(f"[{areaName}]({areaUrlList[areaNameEl['id']]})\n\n")
 
         if lines:
             url = f"https://api.telegram.org/bot{os.getenv('BOT_TOKEN')}/sendMessage"
             payload = {
                 "chat_id": os.getenv('CHAT_ID'),
-                "text": f"*----- {title} ---*\n{''.join(lines)}",
+                "text": f"*-- {title} --*\n{''.join(lines)}",
                 "parse_mode": "Markdown",
                 "disable_web_page_preview": True
             }
