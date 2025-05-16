@@ -62,7 +62,7 @@ class TixcraftCleaner:
             url = f"https://api.telegram.org/bot{os.getenv('BOT_TOKEN')}/sendMessage"
             payload = {
                 "chat_id": os.getenv('CHAT_ID'),
-                "text": f"*--------*\n{"".join(lines)}",
+                "text": f"*--------*\n{''.join(lines)}",
                 "parse_mode": "Markdown"
             }
             print(lines)
