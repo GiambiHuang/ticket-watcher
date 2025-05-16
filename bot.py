@@ -63,7 +63,8 @@ class TixcraftCleaner:
             payload = {
                 "chat_id": os.getenv('CHAT_ID'),
                 "text": f"*--------*\n{''.join(lines)}",
-                "parse_mode": "Markdown"
+                "parse_mode": "Markdown",
+                "disable_web_page_preview": True
             }
             print(lines)
             response = requests.post(url, json=payload)
