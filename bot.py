@@ -38,11 +38,13 @@ class TixcraftCleaner:
 
     def send_release_tickets(self):
         lines = []
+        title = ''
         for event in self.events:
             url = f"https://tixcraft.com/ticket/area/{self.activity}/{event}"
 
             soup = self.get_page_content(url)
             
+            title = soup.title.string if soup.title and title == '' else title
             areaNames = soup.find('div', class_='area-list').find_all('a')
 
             if len(areaNames) > 0:
@@ -62,7 +64,7 @@ class TixcraftCleaner:
             url = f"https://api.telegram.org/bot{os.getenv('BOT_TOKEN')}/sendMessage"
             payload = {
                 "chat_id": os.getenv('CHAT_ID'),
-                "text": f"*--------*\n{''.join(lines)}",
+                "text": f"*----- {title} ---*\n{''.join(lines)}",
                 "parse_mode": "Markdown",
                 "disable_web_page_preview": True
             }
