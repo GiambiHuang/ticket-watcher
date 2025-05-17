@@ -46,7 +46,7 @@ class TixcraftCleaner:
             
             title = soup.title.string if soup.title and title == '' else title
             areaNames = soup.find('div', class_='area-list').find_all('a')
-            gameDate = soup.find('select', id='gameId').text.strip()[:10]
+            gameDate = soup.find('option', value=event).text.strip()[:10]
 
             if len(areaNames) > 0:
                 script_strs = soup.find_all('script')
