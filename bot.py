@@ -45,9 +45,14 @@ class TixcraftCleaner:
             soup = self.get_page_content(url)
             
             title = soup.title.string if soup.title and title == '' else title
-            areaNames = soup.find('div', class_='area-list').find_all('a')
-            gameDate = soup.find('option', value=event).text.strip()[:10]
+            area_list_div = soup.find('div', class_='area-list')
+            if area_list_div:
+                areaNames = area_list_div.find_all('a')
+            else:
+                print("⚠️ 找不到 class='area-list' 的 <div>")
+                continue
 
+            gameDate = soup.find('option', value=event).text.strip()[:10]
             if len(areaNames) > 0:
                 script_strs = soup.find_all('script')
                 for script_str in script_strs:
