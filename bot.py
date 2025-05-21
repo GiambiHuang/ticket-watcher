@@ -38,39 +38,25 @@ class TixcraftCleaner:
 
     def send_release_tickets(self):
         lines = []
-        title = ''
-        for event in self.events:
-            url = f"https://tixcraft.com/ticket/area/{self.activity}/{event}"
+        url = f"https://tixcraft.com/activity/game/{self.activity}"
+        soup = self.get_page_content(url)
 
-            soup = self.get_page_content(url)
-            
-            title = soup.title.string if soup.title and title == '' else title
-            area_list_div = soup.find('div', class_='area-list')
-            if area_list_div:
-                areaNames = area_list_div.find_all('a')
-            else:
-                print("⚠️ 找不到 class='area-list' 的 <div>")
-                continue
+        tickets = soup.find('div', id='gameList').find_all('tr')
 
-            gameDate = soup.find('option', value=event).text.strip()[:10]
-            if len(areaNames) > 0:
-                script_strs = soup.find_all('script')
-                for script_str in script_strs:
-                    match = re.search(r'var\s+areaUrlList\s*=\s*(\{.*?\});', script_str.text.strip())
-                    if match:
-                        areaUrlList = json.loads(match.group(1))
-                        break
-
-                for areaNameEl in areaNames:
-                    areaName = areaNameEl.text.strip()
-                    if any(keyword in areaName for keyword in self.keywords):
-                        lines.append(f"{gameDate}__{areaName}_\n{areaUrlList[areaNameEl['id']]}\n\n")
+        for ticket in tickets:
+            ticketId = ticket.get('data-key')
+            if ticketId:
+                hasLink = ticket.find('button')
+                if hasLink:
+                    tds = ticket.find_all('td')
+                    link = f"https://tixcraft.com/ticket/area/{self.activity}/{ticketId}"
+                    lines.append(f"{tds[0].text[:10]}__{tds[1].text}_\n{link}\n\n")
 
         if lines:
             url = f"https://api.telegram.org/bot{os.getenv('BOT_TOKEN')}/sendMessage"
             payload = {
                 "chat_id": os.getenv('CHAT_ID'),
-                "text": f"*-- {os.getenv('TITLE', title)} --*\n{''.join(lines)}",
+                "text": f"*-- {os.getenv('TITLE', '')} --*\n{''.join(lines)}",
                 "parse_mode": "Markdown",
                 "disable_web_page_preview": True
             }
